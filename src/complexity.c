@@ -2,7 +2,7 @@
 #include "pebble_app.h"
 #include "pebble_fonts.h"
 
-#define MY_UUID {0xA4, 0x1B, 0xB0, 0xE2, 0xD2, 0x62, 0x4E, 0xA6, 0xAA, 0x30, 0xED, 0xBE, 0x01, 0xE3, 0x8A, 0x02}
+#define MY_UUID { 0xAA, 0x3C, 0x31, 0x4B, 0x8D, 0xA5, 0x41, 0x3C, 0xA7, 0xC5, 0x33, 0xD2, 0xAD, 0x7E, 0x46, 0x76 }
 PBL_APP_INFO(MY_UUID, "Complexity", "Magnus Kvevlander", 1, 0 /* App version */, RESOURCE_ID_IMAGE_MENU_ICON, APP_INFO_WATCH_FACE);
 
 Window window;
@@ -76,15 +76,19 @@ void handle_minute_tick(AppContextRef ctx, PebbleTickEvent *t) {
   static char time_text[] = "00:00";
   static char day_text[] = "Xxxxxxxxxx w00";
   static char date_text[] = "Xxxxxxxxx 00";
+  static char new_date_text[] = "Xxxxxxxxx 00";
 
   char *time_format;
 
 
   // TODO: Only update the date when it's changed.
-  string_format_time(date_text, sizeof(date_text), "%B %e", t->tick_time);
-  text_layer_set_text(&text_date_layer, date_text);
-  string_format_time(day_text, sizeof(day_text), "%A w%W", t->tick_time);
-  text_layer_set_text(&text_day_layer, day_text);
+  string_format_time(new_date_text, sizeof(date_text), "%B %e", t->tick_time);
+  if (strncmp(new_date_text, date_text, sizeof(date_text)) != 0) {
+	  strncpy(date_text, new_date_text, sizeof(date_text));
+	  text_layer_set_text(&text_date_layer, date_text);
+	  string_format_time(day_text, sizeof(day_text), "%A w%W", t->tick_time);
+	  text_layer_set_text(&text_day_layer, day_text);
+  }
 
 
   if (clock_is_24h_style()) {
