@@ -4,6 +4,8 @@
 
 Complexity is a quick and dirty mod of the Simplicity watch face for Pebble which adds Week Day and Week Number to the main screen.
 
+The text for the top two rows is only redrawn if changed to conserve juice.
+
 ### Building the watch face
 
 First, create a new project with the `create_pebble_project.py` script included in the [Pebble SDK](http://developer.getpebble.com).
