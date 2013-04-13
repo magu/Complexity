@@ -15,3 +15,9 @@ First, create a new project with the `create_pebble_project.py` script included 
     cd complexity
 
     ./waf configure build
+
+### Install the watch face using libpebble
+
+First, make sure [libpebble](https://github.com/pebble/libpebble) is set up and running properly. Then:
+
+    /<libpebble_path>/p.py --pebble_id <PEBBLE_ID_OR_MAC_ADDRESS> --lightblue load complexity-1.0.pbw
