@@ -81,7 +81,7 @@ void handle_minute_tick(AppContextRef ctx, PebbleTickEvent *t) {
   char *time_format;
 
 
-  // TODO: Only update the date when it's changed.
+  // Only update the date and day strings when they're changed.
   string_format_time(new_date_text, sizeof(date_text), "%B %e", t->tick_time);
   if (strncmp(new_date_text, date_text, sizeof(date_text)) != 0) {
 	  strncpy(date_text, new_date_text, sizeof(date_text));
