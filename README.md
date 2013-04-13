@@ -1,6 +1,8 @@
 ## Complexity
 
-Complexity is a quick and dirty mod of the Simplicity watch face for Pebble&mdash;included in the SDK&mdash;which adds Week Day and Week Number to the main screen.
+![Action shot](https://raw.github.com/magu/Complexity/master/releases/complexity-1.0.png)
+
+Complexity is a quick and dirty mod of the Simplicity watch face for Pebble which adds Week Day and Week Number to the main screen.
 
 ### Building the watch face
 
