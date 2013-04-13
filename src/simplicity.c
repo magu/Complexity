@@ -3,10 +3,11 @@
 #include "pebble_fonts.h"
 
 #define MY_UUID {0xA4, 0x1B, 0xB0, 0xE2, 0xD2, 0x62, 0x4E, 0xA6, 0xAA, 0x30, 0xED, 0xBE, 0x01, 0xE3, 0x8A, 0x02}
-PBL_APP_INFO(MY_UUID, "Simplicity", "Pebble Technology", 3, 0 /* App version */, RESOURCE_ID_IMAGE_MENU_ICON, APP_INFO_WATCH_FACE);
+PBL_APP_INFO(MY_UUID, "Complexity", "Magnus Kvevlander", 1, 0 /* App version */, RESOURCE_ID_IMAGE_MENU_ICON, APP_INFO_WATCH_FACE);
 
 Window window;
 
+TextLayer text_day_layer;
 TextLayer text_date_layer;
 TextLayer text_time_layer;
 
@@ -27,7 +28,7 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
 void handle_init(AppContextRef ctx) {
   (void)ctx;
 
-  window_init(&window, "Simplicity");
+  window_init(&window, "Complexity");
   window_stack_push(&window, true /* Animated */);
   window_set_background_color(&window, GColorBlack);
 
@@ -37,9 +38,17 @@ void handle_init(AppContextRef ctx) {
   text_layer_init(&text_date_layer, window.layer.frame);
   text_layer_set_text_color(&text_date_layer, GColorWhite);
   text_layer_set_background_color(&text_date_layer, GColorClear);
-  layer_set_frame(&text_date_layer.layer, GRect(8, 68, 144-8, 168-68));
+  layer_set_frame(&text_date_layer.layer, GRect(8, 44, 144-8, 168-44));
   text_layer_set_font(&text_date_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_CONDENSED_21)));
   layer_add_child(&window.layer, &text_date_layer.layer);
+
+
+  text_layer_init(&text_day_layer, window.layer.frame);
+  text_layer_set_text_color(&text_day_layer, GColorWhite);
+  text_layer_set_background_color(&text_day_layer, GColorClear);
+  layer_set_frame(&text_day_layer.layer, GRect(8, 68, 144-8, 168-68));
+  text_layer_set_font(&text_day_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_CONDENSED_21)));
+  layer_add_child(&window.layer, &text_day_layer.layer);
 
 
   text_layer_init(&text_time_layer, window.layer.frame);
@@ -65,6 +74,7 @@ void handle_minute_tick(AppContextRef ctx, PebbleTickEvent *t) {
 
   // Need to be static because they're used by the system later.
   static char time_text[] = "00:00";
+  static char day_text[] = "Xxxxxxxxxx w00";
   static char date_text[] = "Xxxxxxxxx 00";
 
   char *time_format;
@@ -73,6 +83,8 @@ void handle_minute_tick(AppContextRef ctx, PebbleTickEvent *t) {
   // TODO: Only update the date when it's changed.
   string_format_time(date_text, sizeof(date_text), "%B %e", t->tick_time);
   text_layer_set_text(&text_date_layer, date_text);
+  string_format_time(day_text, sizeof(day_text), "%A w%W", t->tick_time);
+  text_layer_set_text(&text_day_layer, day_text);
 
 
   if (clock_is_24h_style()) {
