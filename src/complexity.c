@@ -24,6 +24,44 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
 
 }
 
+void update_display(PblTm *tick_time)
+
+  // Need to be static because they're used by the system later.
+  static char time_text[] = "00:00";
+  static char day_text[] = "Xxxxxxxxxx w00";
+  static char date_text[] = "Xxxxxxxxx 00";
+  static char new_date_text[] = "Xxxxxxxxx 00";
+
+  char *time_format;
+
+
+  // Only update the date and day strings when they're changed.
+  string_format_time(new_date_text, sizeof(date_text), "%B %e", tick_time);
+  if (strncmp(new_date_text, date_text, sizeof(date_text)) != 0) {
+	  strncpy(date_text, new_date_text, sizeof(date_text));
+	  text_layer_set_text(&text_date_layer, date_text);
+	  string_format_time(day_text, sizeof(day_text), "%A w%W", tick_time);
+	  text_layer_set_text(&text_day_layer, day_text);
+  }
+
+
+  if (clock_is_24h_style()) {
+    time_format = "%R";
+  } else {
+    time_format = "%I:%M";
+  }
+
+  string_format_time(time_text, sizeof(time_text), time_format, tick_time);
+
+  // Kludge to handle lack of non-padded hour format string
+  // for twelve hour clock.
+  if (!clock_is_24h_style() && (time_text[0] == '0')) {
+    memmove(time_text, &time_text[1], sizeof(time_text) - 1);
+  }
+
+  text_layer_set_text(&text_time_layer, time_text);
+
+}
 
 void handle_init(AppContextRef ctx) {
   (void)ctx;
@@ -63,50 +101,19 @@ void handle_init(AppContextRef ctx) {
   line_layer.update_proc = &line_layer_update_callback;
   layer_add_child(&window.layer, &line_layer);
 
-
-  // TODO: Update display here to avoid blank display on launch?
+  // Avoid blank display on launch
+  PblTm tick_time;
+  get_time(tick_time);
+  update_display(&tick_time);
+  
 }
 
 
 void handle_minute_tick(AppContextRef ctx, PebbleTickEvent *t) {
 
   (void)ctx;
-
-  // Need to be static because they're used by the system later.
-  static char time_text[] = "00:00";
-  static char day_text[] = "Xxxxxxxxxx w00";
-  static char date_text[] = "Xxxxxxxxx 00";
-  static char new_date_text[] = "Xxxxxxxxx 00";
-
-  char *time_format;
-
-
-  // Only update the date and day strings when they're changed.
-  string_format_time(new_date_text, sizeof(date_text), "%B %e", t->tick_time);
-  if (strncmp(new_date_text, date_text, sizeof(date_text)) != 0) {
-	  strncpy(date_text, new_date_text, sizeof(date_text));
-	  text_layer_set_text(&text_date_layer, date_text);
-	  string_format_time(day_text, sizeof(day_text), "%A w%W", t->tick_time);
-	  text_layer_set_text(&text_day_layer, day_text);
-  }
-
-
-  if (clock_is_24h_style()) {
-    time_format = "%R";
-  } else {
-    time_format = "%I:%M";
-  }
-
-  string_format_time(time_text, sizeof(time_text), time_format, t->tick_time);
-
-  // Kludge to handle lack of non-padded hour format string
-  // for twelve hour clock.
-  if (!clock_is_24h_style() && (time_text[0] == '0')) {
-    memmove(time_text, &time_text[1], sizeof(time_text) - 1);
-  }
-
-  text_layer_set_text(&text_time_layer, time_text);
-
+  update_display(t->tick_time);
+  
 }
 
 
