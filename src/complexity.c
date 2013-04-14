@@ -24,7 +24,7 @@ void line_layer_update_callback(Layer *me, GContext* ctx) {
 
 }
 
-void update_display(PblTm *tick_time)
+void update_display(PblTm *tick_time) {
 
   // Need to be static because they're used by the system later.
   static char time_text[] = "00:00";
@@ -103,7 +103,7 @@ void handle_init(AppContextRef ctx) {
 
   // Avoid blank display on launch
   PblTm tick_time;
-  get_time(tick_time);
+  get_time(&tick_time);
   update_display(&tick_time);
   
 }
