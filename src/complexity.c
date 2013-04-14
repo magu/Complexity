@@ -40,7 +40,7 @@ void update_display(PblTm *tick_time) {
   if (strncmp(new_date_text, date_text, sizeof(date_text)) != 0) {
 	  strncpy(date_text, new_date_text, sizeof(date_text));
 	  text_layer_set_text(&text_date_layer, date_text);
-	  string_format_time(day_text, sizeof(day_text), "%A w%W", tick_time);
+	  string_format_time(day_text, sizeof(day_text), (clock_is_24h_style())?"%A W%W":"%A W%U", tick_time);
 	  text_layer_set_text(&text_day_layer, day_text);
   }
 
